@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
+    int songID;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* newNode(int id) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->songID = id;
+    node->next = NULL;
+    return node;
+}
+
+// Function to reverse segment between m and n
+struct Node* reversePlaylistSegment(struct Node* head, int m, int n) {
+    if (head == NULL || m == n) return head;
+
+    struct Node dummy;
+    dummy.next = head;
+    struct Node* prev = &dummy;
+
+    // Move prev to the node before position m
+    for (int i = 1; i < m; i++) {
+        prev = prev->next;
+    }
+
+    // Start reversing from m to n
+    struct Node* curr = prev->next;
+    struct Node* next = NULL;
+
+    for (int i = 0; i < n - m; i++) {
+        next = curr->next;
+        curr->next = next->next;
+        next->next = prev->next;
+        prev->next = next;
+    }
+
+    return dummy.next;
+}
+
+// Helper to print playlist
+void printList(struct Node* head) {
+    while (head != NULL) {
+        printf("%d", head->songID);
+        if (head->next != NULL) printf(" -> ");
+        head = head->next;
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    // Create playlist: 101->102->103->104->105->106->107
+    struct Node* head = newNode(101);
+    head->next = newNode(102);
+    head->next->next = newNode(103);
+    head->next->next->next = newNode(104);
+    head->next->next->next->next = newNode(105);
+    head->next->next->next->next->next = newNode(106);
+    head->next->next->next->next->next->next = newNode(107);
+
+    int m = 2, n = 5;
+
+    printf("Original Playlist:\n");
+    printList(head);
+
+    head = reversePlaylistSegment(head, m, n);
+
+    printf("\nModified Playlist:\n");
+    printList(head);
+
+    return 0;
+}
